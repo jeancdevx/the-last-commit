@@ -11,7 +11,7 @@ test.describe('The Last Commit · Full E2E QA', () => {
   test('Milestone 1 & 2: A-07 before/after, full 3-folio investigation, reload persistence and ending', async ({
     page
   }) => {
-    test.setTimeout(90_000)
+    test.setTimeout(180_000)
 
     const consoleErrors: string[] = []
     const pageErrors: string[] = []
@@ -52,14 +52,26 @@ test.describe('The Last Commit · Full E2E QA', () => {
 
     expect(coverLoaded).toBe(true)
 
+    // Wait for live 3D title scene to finish loading and show editorial menu
+    const playButton = page.getByRole('button', { name: /Jugar/i })
+
+    await expect(playButton).toBeVisible({ timeout: 25_000 })
+    await page.waitForTimeout(800)
+    await page.screenshot({ path: resolve(EVIDENCE_DIR, 'title-live.png') })
+
     // Start new game
-    await page.getByRole('button', { name: /Jugar/i }).click()
+    await playButton.click()
 
     await page.waitForFunction(
       () => window.__TLC_QA__?.getPhase() === 'playing',
       undefined,
       { timeout: 25_000 }
     )
+
+    // Snap cleanly to spawn for crisp before screenshot
+    await page.evaluate(() => {
+      window.__TLC_QA__?.teleportAndLook([-0.8, 1.65, 4.75], [1.55, 1.14, 2.0])
+    })
 
     // Verify all 9 GLBs and 10 instances loaded with WebGL 2
     const initialDiag = await page.evaluate(() =>
@@ -208,6 +220,30 @@ test.describe('The Last Commit · Full E2E QA', () => {
       page.getByText(/El turno empezó antes de medianoche/i)
     ).toBeVisible()
 
+    // Check Corporate OS apps: Mail (ElevenLabs voicemail + transcript), Chat (#planta-04), Terminal Git, and 3-cam CCTV
+    await page.getByRole('button', { name: /Correo/i }).click()
+    await page.getByRole('button', { name: /I\. Salas/i }).click()
+    await expect(
+      page.getByRole('button', { name: /Escuchar nota de voz/i })
+    ).toBeVisible()
+    await expect(
+      page.getByText(/El cierre acaba de borrar mi turno/i)
+    ).toBeVisible()
+    await page.screenshot({ path: resolve(EVIDENCE_DIR, 'console-mail.png') })
+
+    await page.getByRole('button', { name: /Chat #planta-04/i }).click()
+    await expect(page.getByText(/Acaba de apagarse mi lámpara/i)).toBeVisible()
+
+    await page.getByRole('button', { name: /Terminal Git/i }).click()
+    await page.getByRole('button', { name: 'git status' }).click()
+    await expect(page.getByText(/ELIMINADO DEL PLANO/i)).toBeVisible()
+
+    await page.getByRole('button', { name: /Cámaras CCTV/i }).click()
+    await expect(page.getByText(/ALERTA · ANOMALÍA EN A-07/i)).toBeVisible()
+    await expect(page.getByText(/CAM-03/i)).toBeVisible()
+    await page.screenshot({ path: resolve(EVIDENCE_DIR, 'console-cctv.png') })
+    await page.getByRole('button', { name: 'Cierre anual' }).click()
+
     await page.getByLabel('25/12/2023 · 00:10').check()
     await page.getByRole('button', { name: 'Validar folio 07' }).click()
     await expect(
@@ -322,8 +358,10 @@ test.describe('The Last Commit · Full E2E QA', () => {
 
     // Reload browser and verify Continue preserves open door state
     await page.reload()
-    await expect(page.getByRole('button', { name: /Continuar/i })).toBeVisible()
-    await page.getByRole('button', { name: /Continuar/i }).click()
+    const continueBtn = page.getByRole('button', { name: /Continuar/i })
+
+    await expect(continueBtn).toBeVisible({ timeout: 25_000 })
+    await continueBtn.click()
 
     await page.waitForFunction(
       () => window.__TLC_QA__?.getPhase() === 'playing',
@@ -350,8 +388,23 @@ test.describe('The Last Commit · Full E2E QA', () => {
     await expect(
       page.getByText('Tres guardias de Nochebuena conservadas.')
     ).toBeVisible()
-    await page.waitForTimeout(200)
+    await page.waitForTimeout(1200)
     await page.screenshot({ path: resolve(EVIDENCE_DIR, 'ending.png') })
+
+    // Verify Return to Menu -> Achievements gallery & Chapters unlocked
+    await page.getByRole('button', { name: 'Volver al menú' }).click()
+    await expect(page.getByRole('button', { name: /Logros/i })).toBeVisible()
+    await page.getByRole('button', { name: /Logros/i }).click()
+    await expect(
+      page.getByRole('heading', { name: 'Logros descubiertos' })
+    ).toBeVisible()
+    await expect(page.getByText('La oficina te recuerda')).toBeVisible()
+    await page.waitForTimeout(200)
+    await page.screenshot({ path: resolve(EVIDENCE_DIR, 'achievements.png') })
+    await page.keyboard.press('Escape')
+
+    await page.getByRole('button', { name: /Capítulos/i }).click()
+    await expect(page.getByText('El último commit')).toBeVisible()
 
     expect(consoleErrors).toEqual([])
     expect(pageErrors).toEqual([])
@@ -361,6 +414,8 @@ test.describe('The Last Commit · Full E2E QA', () => {
   test('Milestone 3: nested Escape, mute controls, corrupt save recovery, WebGL fallback, and diagnostics', async ({
     page
   }) => {
+    test.setTimeout(120_000)
+
     const failedRequests: string[] = []
 
     page.on('response', res => {
@@ -382,7 +437,10 @@ test.describe('The Last Commit · Full E2E QA', () => {
 
     // 2. WebGL 2 failure fallback UI
     await page.goto('/?forceWebglError=1')
-    await page.getByRole('button', { name: /Jugar/i }).click()
+    const playFallback = page.getByRole('button', { name: /Jugar/i })
+
+    await expect(playFallback).toBeVisible({ timeout: 15_000 })
+    await playFallback.click()
     await expect(
       page.getByRole('heading', { name: 'No se pudo iniciar la escena 3D' })
     ).toBeVisible()
@@ -390,7 +448,10 @@ test.describe('The Last Commit · Full E2E QA', () => {
 
     // 3. Nested Escape & Mute control
     await page.goto('/')
-    await page.getByRole('button', { name: /Jugar/i }).click()
+    const playBtn2 = page.getByRole('button', { name: /Jugar/i })
+
+    await expect(playBtn2).toBeVisible({ timeout: 25_000 })
+    await playBtn2.click()
     await page.waitForFunction(
       () => window.__TLC_QA__?.getPhase() === 'playing',
       undefined,
