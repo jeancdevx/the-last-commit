@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "title": "The Last Commit",
+  "lang": "es",
+  "tagline": "El sistema dice que la oficina está vacía. Tú sigues dentro.",
+  "opening": {
+    "date": "24/12/2026",
+    "time": "23:52",
+    "panelTitle": "Consola de cierre anual",
+    "line": "A-07 · Puesto vacío. Cierre iniciado.",
+    "intro": "Queda revisar el informe antes de cerrar la planta.",
+    "return": "La lámpara estaba encendida hace un momento."
+  },
+  "stages": [
+    {"id":"opening","time":"23:52","requires":[]},
+    {"id":"folio-07","time":"23:54","requires":["panel_read","tag_07","a07_absence_seen"]},
+    {"id":"folio-19","time":"23:57","requires":["restored_07"]},
+    {"id":"folio-26","time":"23:59","requires":["restored_19"]},
+    {"id":"confirmed","time":"00:00","requires":["restored_26","commit_confirmed"]},
+    {"id":"ending","time":"00:01","requires":["commit_confirmed","exit_used"]}
+  ],
+  "clues": {
+    "tag_07":{"title":"Adorno · Folio 07","name":"I. Salas","stamp":"24 DIC 2023","station":"A-07","folio":"07","text":"I. Salas · 24 DIC 2023 · Folio 07","texture":"textures/tag-07.png","model":"models/tag-07.glb"},
+    "tag_19":{"title":"Adorno · Folio 19","name":"M. Rojas","stamp":"24 DIC 2025","station":"B-02","folio":"19","text":"M. Rojas · 24 DIC 2025 · Folio 19","texture":"textures/tag-19.png","model":"models/tag-19.glb"},
+    "tag_26":{"title":"Adorno · Folio 26","name":"Turno actual","stamp":"24 DIC 2026","station":"A-06","folio":"26","text":"Turno actual · 24 DIC 2026 · Folio 26 · A-06","texture":"textures/tag-26.png","model":"models/tag-26.glb"},
+    "ledger_07":{"title":"Bitácora · Folio 07","text":"I. Salas · A-07. Entrada: 24/12/2023 a las 21:00. Salida: 25/12/2023 a las 00:10.","texture":"textures/ledger.png"},
+    "ledger_19":{"title":"Bitácora · Folio 19","text":"M. Rojas · B-02. Entrada: 24/12/2025 a las 22:00. Salida: 25/12/2025 a las 00:20.","texture":"textures/ledger.png"},
+    "note_26":{"title":"Nota del turno actual","text":"A-06 · Folio 26. Entrada: 24/12/2026 a las 22:30. Salida prevista: 25/12/2026 a las 00:15.","texture":"textures/current-note.png"}
+  },
+  "puzzles": [
+    {"id":"folio-07","folio":"07","requiredClues":["tag_07","ledger_07"],"prompt":"Asigna la fecha de salida del folio 07.","options":[{"id":"same-day","label":"24/12/2023 · 00:10"},{"id":"next-day","label":"25/12/2023 · 00:10"},{"id":"following-year","label":"25/12/2024 · 00:10"}],"answer":"next-day","hint":"El turno empezó antes de medianoche y terminó diez minutos después. Revisa la fecha de salida en la bitácora.","success":"Folio 07 restaurado. I. Salas figura otra vez en A-07."},
+    {"id":"folio-19","folio":"19","requiredClues":["tag_19","ledger_19"],"prompt":"Identifica el registro que pertenece a M. Rojas.","options":[{"id":"row-17","label":"Folio 17 · B-02 · 25/12/2025 · 00:20"},{"id":"row-19-short","label":"Folio 19 · B-02 · 25/12/2025 · 00:02"},{"id":"row-19","label":"Folio 19 · B-02 · 25/12/2025 · 00:20"}],"answer":"row-19","hint":"Usa el adorno para elegir el folio. El horario correcto está anotado en la bitácora.","success":"Folio 19 restaurado. B-02 vuelve a figurar en la planta."},
+    {"id":"folio-26","folio":"26","requiredClues":["tag_26","note_26"],"prompt":"Recupera el turno que sigue activo.","options":[{"id":"a06-25","label":"Folio 26 · A-06 · 25/12/2026 · 00:15"},{"id":"a07-25","label":"Folio 26 · A-07 · 25/12/2026 · 00:15"},{"id":"a06-24","label":"Folio 26 · A-06 · 24/12/2026 · 00:15"}],"answer":"a06-25","hint":"Compara el puesto y la fecha con la nota que dejaste junto al monitor.","success":"Folio 26 recuperado. Queda confirmar la restauración."}
+  ],
+  "commit": {"button":"Confirmar restauración","success":"Commit confirmado. Tres guardias conservadas.","exitCue":"La salida está abierta."},
+  "ending": {"primary":"La oficina ya sabe que estuviste aquí.","secondary":"Tres guardias de Nochebuena conservadas."},
+  "subtitles":{"hvac":"[Ventilación de la oficina]","a07_stop":"[Se apaga el fluorescente del A-07]","tree_cue":"[Tintineo tenue en recepción]","exit":"[Se libera el pestillo de la salida]"}
+}
