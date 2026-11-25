@@ -26,10 +26,24 @@
   font-weight: 600;
   font-display: swap;
 }
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("../fonts/instrument-serif-latin-400-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Instrument Serif";
+  src: url("../fonts/instrument-serif-latin-400-italic.woff2") format("woff2");
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+}
 :root {
   color-scheme: dark;
-  --tlc-background: #111716;
-  --tlc-panel: #18211d;
+  --tlc-background: #0a0f0e;
+  --tlc-panel: #141c19;
   --tlc-paper: #d0bb92;
   --tlc-text: #f1ede2;
   --tlc-secondary: #adb7ae;
@@ -38,6 +52,7 @@
   --tlc-danger: #ee9980;
   --tlc-line: #52665c;
   --tlc-title-font: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --tlc-serif-font: "Instrument Serif", Georgia, "Times New Roman", serif;
   --tlc-console-font: "IBM Plex Mono", ui-monospace, monospace;
   --tlc-body-font: "Inter", system-ui, sans-serif;
 }

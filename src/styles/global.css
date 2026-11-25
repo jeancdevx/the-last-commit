@@ -1,8 +1,8 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-tlc-bg: #111716;
-  --color-tlc-panel: #18211d;
+  --color-tlc-bg: #0a0f0e;
+  --color-tlc-panel: #141c19;
   --color-tlc-paper: #d0bb92;
   --color-tlc-text: #f1ede2;
   --color-tlc-secondary: #adb7ae;
@@ -11,6 +11,7 @@
   --color-tlc-danger: #ee9980;
   --color-tlc-line: #52665c;
   --font-title: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
   --font-console: 'IBM Plex Mono', ui-monospace, monospace;
   --font-body: 'Inter', system-ui, sans-serif;
 }
@@ -20,7 +21,7 @@
   body {
     height: 100%;
     margin: 0;
-    background-color: var(--tlc-background, #111716);
+    background-color: var(--tlc-background, #0a0f0e);
     color: var(--tlc-text, #f1ede2);
     font-family: var(--tlc-body-font, 'Inter', system-ui, sans-serif);
     -webkit-font-smoothing: antialiased;
@@ -39,22 +40,357 @@
   }
 }
 
+/* --- Editorial Title Screen (inspired by halloween.dev) --- */
+
+.tlc-title-rule {
+  background: linear-gradient(
+    to bottom,
+    rgba(241, 237, 226, 0) 0%,
+    rgba(241, 237, 226, 0.2) 18%,
+    rgba(241, 237, 226, 0.2) 82%,
+    rgba(241, 237, 226, 0) 100%
+  );
+}
+
+.tlc-title-shade {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(6, 10, 9, 0.88) 0%,
+      rgba(8, 13, 12, 0.56) 38%,
+      rgba(8, 13, 12, 0.14) 68%,
+      rgba(6, 10, 9, 0.35) 100%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(6, 10, 9, 0.65) 0%,
+      transparent 16%,
+      transparent 76%,
+      rgba(6, 10, 9, 0.88) 100%
+    );
+}
+
+.tlc-caret {
+  display: inline-block;
+  width: 0.42em;
+  height: 0.085em;
+  margin-left: 0.1em;
+  background-color: var(--tlc-amber, #e2ac65);
+  box-shadow: 0 0 0.3em rgba(226, 172, 101, 0.65);
+  animation: tlc-caret-blink 1.06s step-end infinite;
+  vertical-align: -0.04em;
+}
+
+.tlc-loading-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 240, 214, 0.65),
+    transparent
+  );
+  animation: tlc-sheen 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.tlc-menu-item {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.85rem;
+  padding: 0.35rem 2.2rem 0.35rem 0;
+  background: transparent;
+  border: 0;
+  color: rgba(241, 237, 226, 0.58);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9);
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+
+.tlc-menu-item::before {
+  content: '>';
+  position: absolute;
+  left: -1.15em;
+  font-family: var(--tlc-console-font);
+  font-size: 0.8em;
+  color: var(--tlc-amber, #e2ac65);
+  opacity: 0;
+  transform: translateX(-0.4em);
+  transition:
+    opacity 0.14s ease,
+    transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.tlc-menu-item:hover,
+.tlc-menu-item:focus-visible,
+.tlc-menu-item.is-primary {
+  color: #f6f2ea;
+}
+
+.tlc-menu-item:hover::before,
+.tlc-menu-item:focus-visible::before,
+.tlc-menu-item.is-primary::before {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.tlc-menu-item:focus-visible {
+  outline: none;
+}
+
+.tlc-title-entering {
+  animation: tlc-title-leave 0.55s ease-in forwards;
+  pointer-events: none;
+}
+
+/* --- Minimalist HUD, Reticle & Resident Evil 3D Markers --- */
+
+.tlc-reticle-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: rgba(241, 237, 226, 0.72);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.9);
+  transition:
+    transform 0.18s cubic-bezier(0.2, 0.9, 0.3, 1),
+    background-color 0.18s ease;
+}
+
+.tlc-reticle-ring {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(245, 240, 230, 0.88);
+  box-shadow:
+    0 0 10px rgba(0, 0, 0, 0.72),
+    inset 0 0 6px rgba(226, 172, 101, 0.25);
+  opacity: 0;
+  transform: scale(0.35);
+  transition:
+    transform 0.2s cubic-bezier(0.2, 0.9, 0.3, 1),
+    opacity 0.18s ease,
+    border-color 0.18s ease;
+}
+
+.tlc-reticle.is-active .tlc-reticle-dot {
+  background: #fff9ee;
+  transform: scale(1.25);
+}
+
+.tlc-reticle.is-active .tlc-reticle-ring {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.tlc-reticle.is-blocked .tlc-reticle-ring {
+  border-style: dashed;
+  border-color: rgba(226, 172, 101, 0.65);
+}
+
+.tlc-re-marker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.tlc-re-chevron {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  color: #f4f2ea;
+  background: rgba(12, 14, 13, 0.86);
+  border: 1.5px solid rgba(241, 237, 226, 0.36);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
+  transform: translate(-50%, -50%);
+  transition:
+    transform 0.15s cubic-bezier(0.2, 0.9, 0.3, 1),
+    border-color 0.15s ease;
+}
+
+.tlc-re-marker.is-active .tlc-re-chevron {
+  border-color: rgba(226, 172, 101, 0.85);
+  transform: translate(-50%, -50%) scale(0.86);
+}
+
+.tlc-re-key {
+  position: absolute;
+  bottom: 14px;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9999px;
+  color: #121513;
+  background: radial-gradient(
+    circle at 50% 34%,
+    #f8f6f0 0%,
+    #e4e2d9 72%,
+    #d2d0c6 100%
+  );
+  border: 1.5px solid rgba(18, 20, 18, 0.78);
+  box-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.78),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  transform: translateX(-50%);
+  animation: tlc-prompt-pop 0.16s cubic-bezier(0.2, 0.9, 0.3, 1.1) both;
+}
+
+/* --- Cinematic Captions, Scanlines, CCTV & VHS/OSD Ending --- */
+
+.tlc-caption {
+  text-shadow:
+    0 2px 24px rgba(0, 0, 0, 0.96),
+    0 0 3px rgba(0, 0, 0, 0.95);
+  animation: tlc-caption-in 0.45s ease-out both;
+}
+
 .tlc-scanlines {
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(241, 237, 226, 0.025) 0px,
-    rgba(241, 237, 226, 0.025) 1px,
+    rgba(241, 237, 226, 0.028) 0px,
+    rgba(241, 237, 226, 0.028) 1px,
     transparent 1px,
     transparent 3px
   );
 }
 
+.tlc-cctv-scan {
+  background:
+    repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.28) 0 1px,
+      transparent 1px 3px
+    ),
+    radial-gradient(transparent 52%, rgba(0, 0, 0, 0.65) 100%);
+}
+
+.tlc-rec-blink {
+  animation: tlc-caret-blink 1.5s step-end infinite;
+}
+
 .tlc-vignette {
   background: radial-gradient(
     ellipse at center,
-    transparent 52%,
-    rgba(9, 13, 12, 0.68) 100%
+    transparent 48%,
+    rgba(5, 8, 7, 0.78) 100%
   );
+}
+
+.tlc-ending-bg {
+  background:
+    radial-gradient(
+      58% 52% at 24% 34%,
+      rgba(226, 172, 101, 0.08),
+      transparent 72%
+    ),
+    radial-gradient(
+      120% 90% at 50% 45%,
+      transparent 38%,
+      rgba(4, 7, 6, 0.92) 100%
+    ),
+    rgba(7, 10, 9, 0.8);
+  animation: tlc-fade-in 1.1s ease-out both;
+}
+
+.tlc-ending-tape::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: 0;
+  right: 0;
+  height: 14%;
+  background: linear-gradient(
+    transparent,
+    rgba(241, 237, 226, 0.04) 40%,
+    rgba(241, 237, 226, 0.08) 50%,
+    rgba(241, 237, 226, 0.04) 60%,
+    transparent
+  );
+  animation: tlc-ending-track 9s linear infinite;
+}
+
+.tlc-osd-text {
+  text-shadow:
+    0 0 6px rgba(241, 237, 226, 0.35),
+    1px 0 rgba(255, 72, 60, 0.45),
+    -1px 0 rgba(72, 175, 255, 0.35);
+}
+
+@keyframes tlc-caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes tlc-sheen {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes tlc-title-leave {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes tlc-prompt-pop {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.75);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+@keyframes tlc-caption-in {
+  from {
+    opacity: 0;
+    letter-spacing: 0.04em;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    letter-spacing: 0;
+    transform: translateY(0);
+  }
+}
+
+@keyframes tlc-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes tlc-ending-track {
+  to {
+    transform: translateY(900%);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
