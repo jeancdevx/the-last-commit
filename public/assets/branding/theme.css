@@ -1,0 +1,43 @@
+@font-face {
+  font-family: "Barlow Condensed";
+  src: url("../fonts/barlow-condensed-latin-700-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../fonts/ibm-plex-mono-latin-500-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/inter-latin-400-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/inter-latin-600-normal.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+:root {
+  color-scheme: dark;
+  --tlc-background: #111716;
+  --tlc-panel: #18211d;
+  --tlc-paper: #d0bb92;
+  --tlc-text: #f1ede2;
+  --tlc-secondary: #adb7ae;
+  --tlc-positive: #8dde9c;
+  --tlc-amber: #e2ac65;
+  --tlc-danger: #ee9980;
+  --tlc-line: #52665c;
+  --tlc-title-font: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --tlc-console-font: "IBM Plex Mono", ui-monospace, monospace;
+  --tlc-body-font: "Inter", system-ui, sans-serif;
+}
