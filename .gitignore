@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Kit source (read-only reference, never modified)
+The_Last_Commit_Kit/
+
+# Astro & build outputs
+dist/
+.astro/
+
+# Testing & QA artifacts
+test-results/
+playwright-report/
+playwright/.cache/
+coverage/
+
+# Environment & local files
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log
+*.tsbuildinfo
+
+# Editor & tooling caches
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.husky/_/
