@@ -11,7 +11,7 @@
     "preview": "astro preview",
     "check": "astro check && tsc --noEmit",
     "lint": "oxlint",
-    "lint:fix": "oxlint --fix",
+    "lint:fix": "oxlint --fix --no-error-on-unmatched-pattern",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
     "test": "vitest run",
@@ -46,11 +46,11 @@
   },
   "lint-staged": {
     "*.{js,mjs,cjs,ts,tsx}": [
-      "oxlint --fix",
-      "oxfmt --write"
+      "oxlint --fix --no-error-on-unmatched-pattern",
+      "oxfmt --write --no-error-on-unmatched-pattern"
     ],
     "*.{astro,css,json,md}": [
-      "oxfmt --write"
+      "oxfmt --write --no-error-on-unmatched-pattern"
     ]
   },
   "engines": {
