@@ -1,0 +1,250 @@
+{
+  "version": 1,
+  "files": [
+    {
+      "path": "art/cover.webp",
+      "bytes": 93444,
+      "sha256": "ddcb96fea5d04c9257a6711e341ca8ac952cc678e8b828915496d362addfc93d"
+    },
+    {
+      "path": "art/scene-preview.png",
+      "bytes": 699211,
+      "sha256": "47be19d19a863514f05a706a785e4d996539b42f72e55c4268d2e9bc8f82b76c"
+    },
+    {
+      "path": "art/social-1200x630.jpg",
+      "bytes": 98273,
+      "sha256": "6f2ccb5e1a4b1a4dc100dcceac916ce25a44bc1bdb72b59f7676f6a91b56839e"
+    },
+    {
+      "path": "audio/exit-latch.mp3",
+      "bytes": 6313,
+      "sha256": "1d545e2a0533b7a3ba1829c77f643680dd7aa5969d6a6a9adbe1ba6a94d20f30"
+    },
+    {
+      "path": "audio/fluorescent-a07.wav",
+      "bytes": 352844,
+      "sha256": "136cb6278b4c89b5c47b4240d858a4718f311a39c81f2f23acf14c1dc20eed42"
+    },
+    {
+      "path": "audio/manifest.json",
+      "bytes": 1327,
+      "sha256": "4eeb11d67ae116592f184292d01fcf77daf3544d2c6bdba2a71825901280a84c"
+    },
+    {
+      "path": "audio/office-hvac.wav",
+      "bytes": 705644,
+      "sha256": "134940dae60ae445e9425be32d6fbd2efa5db91a8c411901c914bca7cf8383b1"
+    },
+    {
+      "path": "audio/paper-inspect.mp3",
+      "bytes": 8821,
+      "sha256": "ae9ffaa30b354b83c15c103927765f4c80b899f5044dcbcd5b7696a9a956535a"
+    },
+    {
+      "path": "audio/restore.mp3",
+      "bytes": 18852,
+      "sha256": "0a20ba0f89813c2e341eefe56bf61f00b0ae12aa4d1bedd3aba42f3bcb29283e"
+    },
+    {
+      "path": "audio/step-carpet-01.mp3",
+      "bytes": 5999,
+      "sha256": "03d097c7bac74d18f12e35209923bca8a5be0308435d6930d46684ad3039c8da"
+    },
+    {
+      "path": "audio/step-carpet-02.mp3",
+      "bytes": 5999,
+      "sha256": "55793b3fc76da025b8dde9ec13988aaca125a417508b2d0afdf6a83b7e8679fd"
+    },
+    {
+      "path": "audio/step-carpet-03.mp3",
+      "bytes": 6313,
+      "sha256": "192230d6dc6111d3101cc6f39c752cb5d1b04e69db6c7d92d06c539f93bad52a"
+    },
+    {
+      "path": "audio/tree-motif.mp3",
+      "bytes": 39854,
+      "sha256": "3444ae4bde4bce8d57055a8f8e1a42368d5df3267923b658579e758ae0e414aa"
+    },
+    {
+      "path": "audio/ui-click.mp3",
+      "bytes": 3178,
+      "sha256": "0136361a5c121bbba1ce81a4979e5899114e9d5e2126a2199520b5537de31e62"
+    },
+    {
+      "path": "branding/apple-touch-icon.png",
+      "bytes": 7796,
+      "sha256": "13f994c13ba8ee2fc4c7fcf7855f76e8b90787f0d4860de84f28fdce1a50d2c5"
+    },
+    {
+      "path": "branding/favicon.ico",
+      "bytes": 3305,
+      "sha256": "fadd999540565b40bea3ac23383026bc06cee63572d66597de4dfcf647b1c88a"
+    },
+    {
+      "path": "branding/favicon.png",
+      "bytes": 1029,
+      "sha256": "266ce05b4534e21ccd883dd286eb54b42fb52186436d3ef874014f62e9d16059"
+    },
+    {
+      "path": "branding/icon-192.png",
+      "bytes": 8560,
+      "sha256": "b0117bb8e6e646545acb6c02dbd86dc811885ea8919eb25d13c1bf85d63c1804"
+    },
+    {
+      "path": "branding/icon-512.png",
+      "bytes": 4161,
+      "sha256": "f44c4fd84271b93c774d323e25cd52ebf2ac34371b82223e67e444d6df27ad63"
+    },
+    {
+      "path": "branding/theme.css",
+      "bytes": 1168,
+      "sha256": "47155d35d6180f318a43ea879ce605bcee9d3473a27bc2042d015a6f667fc7ca"
+    },
+    {
+      "path": "branding/wordmark-dark.png",
+      "bytes": 6637,
+      "sha256": "aa03bd1df4271015a6afda453be4a5dc68d6357a40fe7bcd7acaa4dc667c4325"
+    },
+    {
+      "path": "branding/wordmark-light.png",
+      "bytes": 6636,
+      "sha256": "bf2bc04718a356151811717d4e327c1d5cce2b21580854fe02d934f67f366b95"
+    },
+    {
+      "path": "fonts/barlow-condensed-latin-700-normal.woff2",
+      "bytes": 22444,
+      "sha256": "3787a5a419171630e6890cfa47c4da067474d005cd0ff8dc11ec090fdc3ee2b8"
+    },
+    {
+      "path": "fonts/ibm-plex-mono-latin-500-normal.woff2",
+      "bytes": 14888,
+      "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22"
+    },
+    {
+      "path": "fonts/inter-latin-400-normal.woff2",
+      "bytes": 23664,
+      "sha256": "8909904ab6c872eb994093482a88a28eca2cd95912d7b6fecd72103b0dc07edc"
+    },
+    {
+      "path": "fonts/inter-latin-600-normal.woff2",
+      "bytes": 24452,
+      "sha256": "f9a06e79cd3a2a20951c0f0e28f66dd0e6d3fda73911d640a2125c8fcb78f21a"
+    },
+    {
+      "path": "models/absence.glb",
+      "bytes": 13652,
+      "sha256": "90d59a8edcb1a5cff9159336fb053a5c751f5c5886bb1fc913772d4c295c140c"
+    },
+    {
+      "path": "models/exit.glb",
+      "bytes": 61000,
+      "sha256": "2bfc36e22b04cd91eba01a5977ae8e54b11a8083c92cc97b1b43d93fb637d96b"
+    },
+    {
+      "path": "models/floor-shell.glb",
+      "bytes": 740688,
+      "sha256": "060a7496010ea9cff90af7b630c647b78ba611d59c9d506a686dcca2abc762e7"
+    },
+    {
+      "path": "models/guard-tree.glb",
+      "bytes": 573428,
+      "sha256": "498d4bc88b775646a547cd0d296e1fd20bfef1683d346cc560c3c8323e8100aa"
+    },
+    {
+      "path": "models/reception.glb",
+      "bytes": 510608,
+      "sha256": "c3507da46323f7efc86ff30ff9214f2542634b89235dc330796a17d558f9ad6d"
+    },
+    {
+      "path": "models/tag-07.glb",
+      "bytes": 183680,
+      "sha256": "f9af9812e358510a3dd6272ea48e72f677ed80f77cd9dd7605033ac3591059f2"
+    },
+    {
+      "path": "models/tag-19.glb",
+      "bytes": 184180,
+      "sha256": "31020c46979074fe249747f154ad052b40f5764f447eb5e045dc7149adc8525f"
+    },
+    {
+      "path": "models/tag-26.glb",
+      "bytes": 184528,
+      "sha256": "71c3d1a073d93c8acd6b5ff914e6d08a5f72ada638f442d2bc485847287715c4"
+    },
+    {
+      "path": "models/workstation.glb",
+      "bytes": 793928,
+      "sha256": "5440837a5fe6f61f0559c8297823f88b17851e57fd598c6f2908e7bcbab9ac99"
+    },
+    {
+      "path": "scene.json",
+      "bytes": 2984,
+      "sha256": "f84c113cfd495671183624977c96cda1424275380fbe9195ea3d183933fe20c0"
+    },
+    {
+      "path": "story.es.json",
+      "bytes": 4136,
+      "sha256": "46facb55c3881259cb4230f0cd36dec41e89eae3c559d4dff994b183e36c3d6c"
+    },
+    {
+      "path": "textures/carpet-tile.jpg",
+      "bytes": 26293,
+      "sha256": "9d626f7b6e4a56362c2172f76d28cd6fddc7e46e421e2c9f71f7dc7348d79be4"
+    },
+    {
+      "path": "textures/ceiling-tile.jpg",
+      "bytes": 20327,
+      "sha256": "a50da9c3de3d370a16c4515fa98b41bfb8d0d7c26536da12f77cceb5bbee2a91"
+    },
+    {
+      "path": "textures/current-note.png",
+      "bytes": 192554,
+      "sha256": "4178dc7c9f275d4a6dca12b082a7c2d549fd698370f8f3b275fd82b0c342815a"
+    },
+    {
+      "path": "textures/desk-laminate.jpg",
+      "bytes": 14542,
+      "sha256": "197830e038a41395446e2eaa0e238b284d43e63581fdb4ec06ae3f0089254aa9"
+    },
+    {
+      "path": "textures/exit-sign.png",
+      "bytes": 4253,
+      "sha256": "b6e84e59c7abd7182890a4b199261284afc3d3c9422f280f920935e0204f6b49"
+    },
+    {
+      "path": "textures/ledger.png",
+      "bytes": 454609,
+      "sha256": "242b6ccf1062eea6c72ca35056b9eb6d74812c2072b9307da7f9ecdc685827be"
+    },
+    {
+      "path": "textures/notice.png",
+      "bytes": 118781,
+      "sha256": "e41edf8d9786ebb0ea49e526b7016dd82a0abe1541ff855396475c3db58d22be"
+    },
+    {
+      "path": "textures/office-wall.jpg",
+      "bytes": 11439,
+      "sha256": "1f8f485d4afa34a8f8f4f3f2571028e6179978bd733cd2887e4441cf4a358938"
+    },
+    {
+      "path": "textures/screen-standby.png",
+      "bytes": 18288,
+      "sha256": "c314867aff034d9475ed3baeae4ce6915862691f5b3787efd9eb8466c94aa7f4"
+    },
+    {
+      "path": "textures/tag-07.png",
+      "bytes": 178283,
+      "sha256": "35cd4c96cebf9646cbd638be5d37bccdc203e6207ea47035d23072e57129ab82"
+    },
+    {
+      "path": "textures/tag-19.png",
+      "bytes": 178784,
+      "sha256": "33e75736748646050d94e7b278d10790f9bc18f53d88a6c35706e4f7664ef395"
+    },
+    {
+      "path": "textures/tag-26.png",
+      "bytes": 179130,
+      "sha256": "975155eba367591db9e4e1e268f0bc7630128abfb380cbc33f749d2f8b224727"
+    }
+  ]
+}
