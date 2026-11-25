@@ -1,0 +1,17 @@
+---
+import DiagnosticsApp from '@/components/DiagnosticsApp'
+import Layout from '@/layouts/Layout.astro'
+---
+
+<Layout
+  title='Diagnóstico · The Last Commit'
+  description='Verificación de WebGL 2, modelos GLB, audio y guardado local.'
+>
+  <main class='h-full w-full overflow-y-auto bg-tlc-bg'>
+    <DiagnosticsApp client:only='preact'>
+      <div slot='fallback' class='p-8 font-console text-sm text-tlc-secondary'>
+        Iniciando panel de diagnóstico...
+      </div>
+    </DiagnosticsApp>
+  </main>
+</Layout>
