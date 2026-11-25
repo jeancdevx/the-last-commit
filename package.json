@@ -1,0 +1,60 @@
+{
+  "name": "the-last-commit",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "build:subpath": "ASTRO_BASE=/tlc/ astro build",
+    "preview": "astro preview",
+    "check": "astro check && tsc --noEmit",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "verify:kit": "python3 tooling/verify-kit.py",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@astrojs/preact": "6.1.6",
+    "@tailwindcss/vite": "4.3.5",
+    "astro": "7.4.13",
+    "preact": "11.2.0",
+    "tailwindcss": "4.3.5",
+    "three": "0.187.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "@astrojs/compiler-rs": "0.5.3",
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
+    "@playwright/test": "1.65.1",
+    "@stylistic/eslint-plugin": "6.0.1",
+    "@types/node": "^26.6.10",
+    "@types/three": "0.187.0",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.2",
+    "oxfmt": "0.80.0",
+    "oxlint": "1.95.0",
+    "typescript": "5.9.3",
+    "vitest": "5.1.1"
+  },
+  "lint-staged": {
+    "*.{js,mjs,cjs,ts,tsx}": [
+      "oxlint --fix",
+      "oxfmt --write"
+    ],
+    "*.{astro,css,json,md}": [
+      "oxfmt --write"
+    ]
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "packageManager": "pnpm@10.33.2"
+}
