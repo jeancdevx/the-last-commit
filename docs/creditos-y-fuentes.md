@@ -12,6 +12,9 @@
 | Barlow Condensed Bold | Google Fonts / Fontsource 5.3.0 | [OFL incluido](../licenses/barlow-condensed-OFL.txt) · [Fuente](https://fontsource.org/fonts/barlow-condensed) |
 | IBM Plex Mono Medium | IBM / Fontsource 5.3.0 | [OFL incluido](../licenses/ibm-plex-mono-OFL.txt) · [Fuente](https://fontsource.org/fonts/ibm-plex-mono) |
 | Inter Regular y SemiBold | Rasmus Andersson / Fontsource 5.3.0 | [OFL incluido](../licenses/inter-OFL.txt) · [Fuente](https://fontsource.org/fonts/inter) |
+| Instrument Serif Regular e Italic | Rodrigo Fuenzalida / Google Fonts / Fontsource 5.3.0 | [OFL incluido](../licenses/instrument-serif-OFL.txt) · [Fuente](https://fontsource.org/fonts/instrument-serif) · Añadida para el contrapunto editorial del título y subtítulos narrativos. |
+| Panorama nocturno y arte de logros (`city-night-panorama.jpg`, `ach-*.jpg`) | Generación de imágenes original para The Last Commit v2.0 | Uso exclusivo para los ventanales lluviosos y galería de logros. |
+| Notas de voz y SFX (`voicemail-salas.mp3`, `voicemail-rojas.mp3`, `whisper-a07.mp3`, `power-dip.mp3`) | Generación original vía ElevenLabs (`eleven_multilingual_v2` y Sound Generation) | Grabaciones ficticias de personajes en español para el buzón de correo y evento A-07. |
 
 ## Catálogos para ampliar la escena
 
