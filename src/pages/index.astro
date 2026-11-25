@@ -1,0 +1,28 @@
+---
+import GameApp from '@/components/GameApp'
+import Layout from '@/layouts/Layout.astro'
+---
+
+<Layout
+  title='The Last Commit · Terror narrativo 3D'
+  description='El sistema dice que la oficina está vacía. Tú sigues dentro.'
+>
+  <main class='relative h-full w-full'>
+    <GameApp client:only='preact'>
+      <div
+        slot='fallback'
+        class='flex h-full w-full flex-col items-center justify-center gap-4 bg-tlc-bg px-6 text-center'
+      >
+        <p class='font-console text-xs tracking-[0.25em] text-tlc-secondary uppercase'>
+          24/12/2026 · 23:52 · Planta 04
+        </p>
+        <h1 class='font-title text-5xl tracking-[0.08em] text-tlc-text uppercase'>
+          The Last Commit
+        </h1>
+        <p class='max-w-md text-sm text-tlc-secondary'>
+          Preparando la oficina y los recursos de escena...
+        </p>
+      </div>
+    </GameApp>
+  </main>
+</Layout>
