@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "units": "meters",
+  "axes": "Three.js/glTF: X right, Y up, Z toward the office",
+  "spawn": {"position": [-0.8, 1.65, 4.75], "lookAt": [1.55, 1.14, 2.0]},
+  "avatar": {"radius": 0.24, "eyeHeight": 1.65, "walkMetersPerSecond": 2.2},
+  "shell": "models/floor-shell.glb",
+  "zones": [
+    {"id":"office","minXZ":[-4.0,0.0],"maxXZ":[4.0,6.0]},
+    {"id":"corridor","minXZ":[-1.5,-7.0],"maxXZ":[1.5,0.0]},
+    {"id":"reception","minXZ":[-3.5,-13.0],"maxXZ":[3.5,-7.0]}
+  ],
+  "wallCollidersXZ": [
+    [-4.1,-0.10,-1.5,0.10],[1.5,-0.10,4.1,0.10],
+    [-4.10,0.0,-3.95,6.1],[3.95,0.0,4.10,6.1],[-4.1,5.95,4.1,6.10],
+    [-1.60,-7.0,-1.45,0.0],[1.45,-7.0,1.60,0.0],
+    [-3.6,-7.10,-1.5,-6.90],[1.5,-7.10,3.6,-6.90],
+    [-3.60,-13.1,-3.45,-7.0],[3.45,-13.1,3.60,-7.0],
+    [-3.6,-13.10,-0.68,-12.95],[0.70,-13.10,3.6,-12.95]
+  ],
+  "instances": [
+    {"id":"office-a06","model":"models/workstation.glb","position":[-2.48,0.0,1.8],"yaw":0,"localCollidersXZ":[[-0.86,-0.38,0.86,0.38],[-0.31,0.48,0.31,1.02]]},
+    {"id":"office-a07","model":"models/workstation.glb","position":[1.55,0.0,2.0],"yaw":0,"stateKey":"stationA07","localCollidersXZ":[[-0.86,-0.38,0.86,0.38],[-0.31,0.48,0.31,1.02]]},
+    {"id":"office-b02","model":"models/workstation.glb","position":[-2.40,0.0,-11.72],"yaw":0,"stateKey":"stationB02","localCollidersXZ":[[-0.86,-0.38,0.86,0.38],[-0.31,0.48,0.31,1.02]]},
+    {"id":"absence-a07","model":"models/absence.glb","position":[1.55,0.0,2.0],"yaw":0,"stateKey":"traceA07"},
+    {"id":"tree","model":"models/guard-tree.glb","position":[1.44,0.0,-10.80],"yaw":0,"localCollidersXZ":[[-0.64,-0.52,0.64,0.49]]},
+    {"id":"tag-07","model":"models/tag-07.glb","parent":"tree","anchor":"ANCHOR_TAG_07","yaw":0},
+    {"id":"tag-19","model":"models/tag-19.glb","parent":"tree","anchor":"ANCHOR_TAG_19","yaw":0},
+    {"id":"tag-26","model":"models/tag-26.glb","parent":"tree","anchor":"ANCHOR_TAG_26","yaw":0},
+    {"id":"reception-ledger","model":"models/reception.glb","position":[-1.93,0.0,-8.66],"yaw":0,"localCollidersXZ":[[-0.77,-0.30,0.77,0.30]]},
+    {"id":"exit","model":"models/exit.glb","position":[-0.66,0.0,-12.96],"yaw":0}
+  ],
+  "lighting": {
+    "ambient":{"sky":"#b2c7d5","ground":"#26322d","intensity":0.95},
+    "cool":{"color":"#a6c7df","ceilingSources":[[0.0,2.62,2.7],[0.0,2.62,-3.1],[-1.25,2.62,-9.30]]},
+    "tree":{"color":"#e2ac65","position":[1.44,1.36,-10.29]},
+    "a07":{"color":"#e1d3ab","position":[2.13,1.29,2.08]}
+  },
+  "interaction": {
+    "maxDistance":2.25,
+    "panel":{"instance":"office-a06","node":"SCREEN_SURFACE"},
+    "ledger":{"instance":"reception-ledger","node":"LEDGER_OPEN"},
+    "note":{"instance":"office-a06","node":"NOTE_CURRENT"},
+    "exit":{"instance":"exit","node":"DOOR_PIVOT"},
+    "ornamentNodes":["TAG_FACE_07","TAG_FACE_19","TAG_FACE_26"],
+    "a07OutsideViewGate":{"playerZMax":-7.55,"requiresTagRead":true}
+  },
+  "roomToneAudio":"audio/office-hvac.wav",
+  "a07Audio":"audio/fluorescent-a07.wav"
+}
