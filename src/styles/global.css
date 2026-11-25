@@ -1,0 +1,69 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-tlc-bg: #111716;
+  --color-tlc-panel: #18211d;
+  --color-tlc-paper: #d0bb92;
+  --color-tlc-text: #f1ede2;
+  --color-tlc-secondary: #adb7ae;
+  --color-tlc-positive: #8dde9c;
+  --color-tlc-amber: #e2ac65;
+  --color-tlc-danger: #ee9980;
+  --color-tlc-line: #52665c;
+  --font-title: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --font-console: 'IBM Plex Mono', ui-monospace, monospace;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+    margin: 0;
+    background-color: var(--tlc-background, #111716);
+    color: var(--tlc-text, #f1ede2);
+    font-family: var(--tlc-body-font, 'Inter', system-ui, sans-serif);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button,
+  [role='button'],
+  input,
+  select {
+    font-family: inherit;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--tlc-amber, #e2ac65);
+    outline-offset: 2px;
+  }
+}
+
+.tlc-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(241, 237, 226, 0.025) 0px,
+    rgba(241, 237, 226, 0.025) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+}
+
+.tlc-vignette {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 52%,
+    rgba(9, 13, 12, 0.68) 100%
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
