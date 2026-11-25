@@ -30,13 +30,16 @@ Es Nochebuena y sigues en la oficina. El cierre anual interpreta como vacías la
 
 Entre la consola corporativa, una bitácora y los adornos de un árbol de Navidad quedan las pruebas de que alguien estuvo allí. Tu trabajo es reconstruir esos registros antes de salir.
 
-The Last Commit combina exploración en primera persona, lectura de evidencias y resolución de tres casos conectados. El terror surge de reconocer un espacio cotidiano y descubrir que algo ha cambiado al regresar. La luz fría de la oficina, el árbol ámbar y el sonido espacial acompañan esa transformación.
+The Last Commit combina exploración en primera persona, lectura de evidencias y resolución de tres casos conectados. El menú ahora presenta la oficina en una escena 3D viva; al entrar, exploras un espacio cotidiano que cambia mientras reconstruyes los turnos borrados. Ventanales con lluvia, luz fría, árbol ámbar, efectos cinematográficos y audio espacial acompañan la investigación.
 
-- **Una investigación completa:** tres folios, restauración de registros, escritorio corporativo interactivo (Correo con notas de voz y transcripción, Chat `#planta-04`, Terminal Git y 3 cámaras CCTV en directo) y tres finales descubribles.
-- **Rejugabilidad y archivo:** selector de 4 capítulos desbloqueables, galería de 10 logros y créditos cinematográficos.
+- **Un escritorio corporativo interactivo:** revisa correos con notas de voz y transcripciones, el Chat `#planta-04`, una Terminal Git ficticia y tres cámaras CCTV en directo.
+- **Tres finales:** restaura y confirma los turnos, fuerza el cierre desde la terminal o insiste en la salida tras la desaparición.
+- **Rejugabilidad y archivo:** selector de cuatro capítulos, galería de diez logros con ilustraciones y créditos cinematográficos. Los capítulos se desbloquean al avanzar.
 - **Lectura a tu ritmo:** el reloj avanza por hitos de la historia; detenerte a leer no consume una cuenta atrás real.
 - **Evidencias que puedes releer:** las pistas se conservan y una respuesta incorrecta ofrece ayuda sin borrarlas.
 - **Continuidad entre sesiones:** progreso, logros, capítulos y ajustes se guardan en el navegador.
+
+El juego incluye una introducción con A-07, escenas de investigación y una secuencia de cierre. La galería de logros y el selector de capítulos permiten volver a los hitos desbloqueados. Las capturas del [menú](evidence/title-live.png), el [escritorio](evidence/console-mail.png), las [cámaras](evidence/console-cctv.png) y los [logros](evidence/achievements.png) muestran partes de la experiencia y contienen spoilers.
 
 La partida está diseñada para escritorio, con teclado y ratón. La duración prevista en el documento de diseño es de **12–15 minutos**; el primer suceso constituye una secuencia de **90–120 segundos**. Son objetivos de diseño, no tiempos medidos con jugadores.
 
@@ -110,10 +113,11 @@ La aplicación se compila como un sitio estático. Astro genera las páginas y m
 | ----------------- | ---------------------------------------------------------------------- |
 | Astro             | Páginas, metadatos y rutas de recursos según la base de despliegue     |
 | Preact            | Menús, pistas, consola, ajustes y acciones del jugador                 |
-| `SceneEngine`     | Renderizado, modelos GLB, cámara, raycasting, iluminación y movimiento |
-| `GameAudioEngine` | Ambiente, efectos, fuentes espaciales y ajustes de sonido              |
-| Estado narrativo  | Reglas de progresión, pistas, restauración de folios y final           |
-| Persistencia      | Validación y almacenamiento local de progreso y ajustes                |
+| `SceneEngine`     | Escena de título y juego, modelos GLB, cámara, raycasting, CCTV, iluminación, postprocesado y movimiento |
+| `GameAudioEngine` | Ambiente, voces, efectos, fuentes espaciales y ajustes de sonido       |
+| Estado narrativo  | Progresión, pistas, restauración de folios y desenlaces               |
+| Progreso meta     | Capítulos, logros, finales descubiertos y correos leídos               |
+| Persistencia      | Validación y almacenamiento local del progreso y los ajustes           |
 
 El motor de escena es dueño del bucle de render; la interfaz recibe cambios relevantes sin actualizar su estado en cada fotograma. Los objetos, las colisiones, la iluminación y el audio derivan del mismo estado narrativo, independiente del reloj real.
 
@@ -149,6 +153,10 @@ evidence/            # Capturas del recorrido automatizado
 | Modelos instanciados, escala, colisiones, luces e interacciones | [`public/assets/scene.json`](public/assets/scene.json)                   |
 | Banco de sonido y configuración de clips                        | [`public/assets/audio/manifest.json`](public/assets/audio/manifest.json) |
 | Reglas de progresión y restauración                             | [`src/helpers/state.helpers.ts`](src/helpers/state.helpers.ts)           |
+| Capítulos, logros y finales                                     | [`src/helpers/achievements.helpers.ts`](src/helpers/achievements.helpers.ts) |
+| Correo, chat y comandos ficticios de terminal                    | [`src/helpers/osData.helpers.ts`](src/helpers/osData.helpers.ts)        |
+| Composición de oficina y objetos decorativos                     | [`src/helpers/setdressing.helpers.ts`](src/helpers/setdressing.helpers.ts) |
+| Postprocesado y efectos de imagen                                | [`src/helpers/postprocess.helpers.ts`](src/helpers/postprocess.helpers.ts) |
 | Tema y estilos de interfaz                                      | [`src/styles/global.css`](src/styles/global.css)                         |
 | Flujo narrativo y criterios de aceptación                       | [`docs/diseno-e-integracion.md`](docs/diseno-e-integracion.md)           |
 
@@ -196,7 +204,7 @@ pnpm test:e2e
 
 Playwright inicia el servidor de vista previa configurado sobre `dist/`. Si ya existe un servidor en el puerto `4321`, verifica que sirve la compilación que quieres probar. En Linux, la instalación de Chromium puede requerir dependencias del sistema.
 
-Las pruebas E2E comprueban carga de recursos y WebGL 2, movimiento, progresión de los tres folios, persistencia, final y recuperación de errores. También generan capturas en `evidence/`; revisa sus cambios antes de incluirlas en un commit.
+Las pruebas E2E cubren carga de recursos y WebGL 2, movimiento, progresión de los folios, las aplicaciones del escritorio corporativo, persistencia, logros, capítulos, final y recuperación de errores. Generan capturas en `evidence/`.
 
 El [informe de entrega](docs/informe-entrega.md) registra **18 pruebas unitarias** y **2 pruebas E2E** aprobadas en Chromium con SwiftShader. Ese entorno usa renderizado por software: la validación con ratón físico, la escucha espacial con auriculares y las mediciones de rendimiento con bloom y sombras en GPU permanecen documentadas como pendientes.
 
