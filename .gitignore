@@ -28,3 +28,7 @@ coverage/
 !.vscode/extensions.json
 .idea/
 .husky/_/
+
+# Agents
+.agents/
+skills-lock.json
