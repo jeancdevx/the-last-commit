@@ -226,6 +226,24 @@ export interface InteractableHover {
   distance: number
 }
 
+export interface ProjectedMarker {
+  kind: InteractableKind
+  label: string
+  x: number
+  y: number
+  inReach: boolean
+  isActive: boolean
+  blocked: boolean
+}
+
+export interface CctvFeed {
+  id: 'cam-01' | 'cam-02' | 'cam-03'
+  label: string
+  location: string
+  dataUrl: string
+  status: string
+}
+
 export type ActiveOverlay =
   | { type: 'none' }
   | { type: 'panel' }
@@ -233,6 +251,7 @@ export type ActiveOverlay =
   | { type: 'clue'; clueId: ClueId }
   | { type: 'pause' }
   | { type: 'settings'; returnTo: 'menu' | 'pause' }
+  | { type: 'achievements' }
   | { type: 'credits' }
 
 export type ScreenPhase =

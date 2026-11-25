@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 
+import AchievementToast from '@/components/AchievementToast'
+import AchievementsModal from '@/components/AchievementsModal'
 import ClueReader from '@/components/ClueReader'
 import ConsolePanel from '@/components/ConsolePanel'
 import CreditsModal from '@/components/CreditsModal'
@@ -9,6 +11,19 @@ import LedgerModal from '@/components/LedgerModal'
 import MenuScreen from '@/components/MenuScreen'
 import PauseModal from '@/components/PauseModal'
 import SettingsModal from '@/components/SettingsModal'
+import {
+  ACHIEVEMENTS,
+  loadMetaProgress,
+  saveMetaProgress
+} from '@/helpers/achievements.helpers'
+import type {
+  AchievementId,
+  AchievementSpec,
+  ChapterId,
+  ChapterSpec,
+  EndingId,
+  MetaProgress
+} from '@/helpers/achievements.helpers'
 import { loadManifests, withBase } from '@/helpers/assets.helpers'
 import { GameAudioEngine } from '@/helpers/audio.helpers'
 import { SceneEngine, checkWebGL2Support } from '@/helpers/scene.helpers'
@@ -31,11 +46,13 @@ import { useEphemeralMessage } from '@/hooks/use-ephemeral-message'
 import { useGameSettings } from '@/hooks/use-game-settings'
 import type {
   ActiveOverlay,
+  CctvFeed,
   DiagnosticSnapshot,
   GameProgress,
   InteractableHover,
   InteractableKind,
   ManifestBundle,
+  ProjectedMarker,
   PuzzleId,
   ScreenPhase,
   Vec3Tuple
@@ -44,6 +61,7 @@ import type {
 interface QaBridge {
   getPhase: () => ScreenPhase
   getProgress: () => GameProgress
+  getMeta: () => MetaProgress
   getDiagnostics: () => DiagnosticSnapshot | null
   teleportAndLook: (position: Vec3Tuple, lookAt: Vec3Tuple) => void
   triggerInteract: () => boolean
@@ -63,9 +81,12 @@ export default function GameApp() {
   const audioRef = useRef<GameAudioEngine | null>(null)
   const manifestsRef = useRef<ManifestBundle | null>(null)
   const progressRef = useRef<GameProgress>(createInitialProgress())
+  const metaRef = useRef<MetaProgress>(loadMetaProgress())
   const phaseRef = useRef<ScreenPhase>('menu')
   const overlayRef = useRef<ActiveOverlay>({ type: 'none' })
   const lastFocusedRef = useRef<HTMLElement | null>(null)
+  const achTimerRef = useRef<number | null>(null)
+  const lockedExitAttemptsRef = useRef(0)
 
   const [manifests, setManifests] = useState<ManifestBundle | null>(null)
   const [manifestError, setManifestError] = useState<string | null>(null)
@@ -74,12 +95,20 @@ export default function GameApp() {
   const [progress, setProgress] = useState<GameProgress>(() =>
     createInitialProgress()
   )
+  const [meta, setMeta] = useState<MetaProgress>(() => metaRef.current)
+  const [activeAchievement, setActiveAchievement] =
+    useState<AchievementSpec | null>(null)
+  const [endingId, setEndingId] = useState<EndingId>('true')
   const [settings, setSettings] = useGameSettings()
   const [saveState, setSaveState] = useState<LoadSaveResult>(() => loadSave())
+  const [sceneReady, setSceneReady] = useState(false)
+  const [enteringGame, setEnteringGame] = useState(false)
   const [loadPercent, setLoadPercent] = useState(0)
-  const [loadDetail, setLoadDetail] = useState('Preparando la oficina...')
+  const [loadDetail, setLoadDetail] = useState('Cargando escena 3D...')
   const [webglErrorText, setWebglErrorText] = useState<string | null>(null)
   const [hover, setHover] = useState<InteractableHover | null>(null)
+  const [markers, setMarkers] = useState<ProjectedMarker[]>([])
+  const [cctvFeeds, setCctvFeeds] = useState<CctvFeed[]>([])
   const [pointerLocked, setPointerLocked] = useState(false)
 
   const toast = useEphemeralMessage(5200)
@@ -95,13 +124,75 @@ export default function GameApp() {
     setOverlay(next)
   }, [])
 
-  const commitProgress = useCallback(
-    (next: GameProgress, immediate = false) => {
-      progressRef.current = next
-      setProgress(next)
-      saveProgress(next)
-      setSaveState(loadSave())
+  const updateMeta = useCallback(
+    (mutator: (current: MetaProgress) => MetaProgress | null) => {
+      const next = mutator(metaRef.current)
 
+      if (!next) return
+
+      metaRef.current = next
+      setMeta(next)
+      saveMetaProgress(next)
+    },
+    []
+  )
+
+  const unlockAchievement = useCallback(
+    (id: AchievementId) => {
+      if (metaRef.current.achievements.includes(id)) {
+        return
+      }
+
+      const spec = ACHIEVEMENTS.find(item => item.id === id)
+
+      if (!spec) return
+
+      updateMeta(current => ({
+        ...current,
+        achievements: [...current.achievements, id]
+      }))
+
+      audioRef.current?.playAchievementChime()
+      setActiveAchievement(spec)
+
+      if (achTimerRef.current !== null) {
+        window.clearTimeout(achTimerRef.current)
+      }
+
+      achTimerRef.current = window.setTimeout(() => {
+        setActiveAchievement(null)
+        achTimerRef.current = null
+      }, 4200)
+    },
+    [updateMeta]
+  )
+
+  const unlockChapter = useCallback(
+    (id: ChapterId) => {
+      if (metaRef.current.chapters.includes(id)) return
+
+      updateMeta(current => ({
+        ...current,
+        chapters: [...current.chapters, id]
+      }))
+    },
+    [updateMeta]
+  )
+
+  const recordEnding = useCallback(
+    (id: EndingId) => {
+      if (metaRef.current.endings.includes(id)) return
+
+      updateMeta(current => ({
+        ...current,
+        endings: [...current.endings, id]
+      }))
+    },
+    [updateMeta]
+  )
+
+  const syncEngineWorld = useCallback(
+    (next: GameProgress, immediate = false) => {
       const engine = engineRef.current
       const bundle = manifestsRef.current
 
@@ -113,11 +204,38 @@ export default function GameApp() {
           !next.a07AbsenceSeen &&
           !next.restored['folio-07']
 
-        engine.applyWorldFlags(flags, stage.id, immediate, shouldWatchAbsence)
+        engine.applyWorldFlags(
+          flags,
+          stage.id,
+          stage.time,
+          immediate,
+          shouldWatchAbsence
+        )
       }
     },
     []
   )
+
+  const commitProgress = useCallback(
+    (next: GameProgress, immediate = false) => {
+      progressRef.current = next
+      setProgress(next)
+      saveProgress(next)
+      setSaveState(loadSave())
+      syncEngineWorld(next, immediate)
+
+      if (next.clues.length >= 6) {
+        unlockAchievement('archivist')
+      }
+    },
+    [syncEngineWorld, unlockAchievement]
+  )
+
+  const refreshCctv = useCallback(() => {
+    const feeds = engineRef.current?.captureCctvFeeds() ?? []
+
+    setCctvFeeds(feeds)
+  }, [])
 
   const openOverlay = useCallback(
     (next: ActiveOverlay) => {
@@ -137,6 +255,10 @@ export default function GameApp() {
           next.type === 'pause' ||
           next.type === 'settings'
       )
+
+      if (next.type === 'credits') {
+        audioRef.current?.setTitleAmbient(true)
+      }
     },
     [setOverlaySync]
   )
@@ -144,6 +266,10 @@ export default function GameApp() {
   const closeOverlay = useCallback(() => {
     const current = overlayRef.current
     const bundle = manifestsRef.current
+
+    if (current.type === 'panel') {
+      audioRef.current?.stopVoicemail()
+    }
 
     if (current.type === 'settings' && current.returnTo === 'pause') {
       setOverlaySync({ type: 'pause' })
@@ -161,7 +287,12 @@ export default function GameApp() {
 
       if (result.triggered) {
         commitProgress(result.progress, false)
-        subtitle.show(bundle.story.subtitles.a07_stop, 5200)
+        audioRef.current?.playPowerDip()
+        subtitle.show(bundle.story.subtitles.a07_stop, 5600)
+        toast.show(
+          'Un chispazo recorre el pasillo. El zumbido de la oficina acaba de callarse.',
+          5600
+        )
       }
     }
 
@@ -169,18 +300,51 @@ export default function GameApp() {
     audioRef.current?.setDucked(false)
 
     if (phaseRef.current === 'playing') {
+      audioRef.current?.setTitleAmbient(false)
       engineRef.current?.setMovementEnabled(true)
     }
 
     if (
-      phaseRef.current === 'menu' &&
+      (phaseRef.current === 'menu' || phaseRef.current === 'ending') &&
       lastFocusedRef.current &&
       document.contains(lastFocusedRef.current)
     ) {
       lastFocusedRef.current.focus()
       lastFocusedRef.current = null
     }
-  }, [commitProgress, setOverlaySync, subtitle])
+  }, [commitProgress, setOverlaySync, subtitle, toast])
+
+  const triggerEnding = useCallback(
+    (id: EndingId, finalProgress?: GameProgress) => {
+      audioRef.current?.stopVoicemail()
+      audioRef.current?.playOneShot('exit')
+      audioRef.current?.setTitleAmbient(true)
+
+      if (finalProgress) {
+        commitProgress(finalProgress, false)
+      }
+
+      setEndingId(id)
+      recordEnding(id)
+
+      if (id === 'true') {
+        unlockAchievement('true_ending')
+      } else if (id === 'force') {
+        unlockAchievement('force_push')
+      }
+
+      setOverlaySync({ type: 'none' })
+      setPhaseSync('ending')
+      engineRef.current?.setEndingCamera(true)
+    },
+    [
+      commitProgress,
+      recordEnding,
+      setOverlaySync,
+      setPhaseSync,
+      unlockAchievement
+    ]
+  )
 
   const handleInteract = useCallback(
     (kind: InteractableKind) => {
@@ -192,7 +356,8 @@ export default function GameApp() {
       const flags = deriveWorldFlags(currentProgress)
 
       if (kind === 'panel') {
-        audioRef.current?.playOneShot('ui-click')
+        audioRef.current?.playOneShot('ui-click', undefined, false)
+        unlockAchievement('first_login')
 
         const { progress: next, firstTime } = markPanelRead(currentProgress)
 
@@ -272,20 +437,36 @@ export default function GameApp() {
         const result = useExit(currentProgress)
 
         if (!result.ok) {
-          audioRef.current?.playOneShot('ui-click')
+          audioRef.current?.playOneShot('ui-click', undefined, false)
+          lockedExitAttemptsRef.current += 1
+
+          if (
+            lockedExitAttemptsRef.current >= 4 &&
+            currentProgress.a07Disappeared
+          ) {
+            lockedExitAttemptsRef.current = 0
+            triggerEnding('loop')
+
+            return
+          }
+
           toast.show(result.message)
 
           return
         }
 
-        audioRef.current?.playOneShot('exit')
-        commitProgress(result.progress, false)
-        setOverlaySync({ type: 'none' })
-        setPhaseSync('ending')
-        engineRef.current?.setEndingCamera(true)
+        lockedExitAttemptsRef.current = 0
+        triggerEnding('true', result.progress)
       }
     },
-    [commitProgress, openOverlay, setOverlaySync, setPhaseSync, subtitle, toast]
+    [
+      commitProgress,
+      openOverlay,
+      subtitle,
+      toast,
+      triggerEnding,
+      unlockAchievement
+    ]
   )
 
   const handleAbsenceSeen = useCallback(() => {
@@ -299,33 +480,32 @@ export default function GameApp() {
 
     if (firstTime) {
       commitProgress(next, false)
-      toast.show(bundle.story.opening.return, 6200)
+      audioRef.current?.playNotificationPing()
+      unlockAchievement('cache_invalidation')
+      unlockChapter('absence')
+      toast.show(
+        `${bundle.story.opening.return} Nueva alerta en el correo y chat de A-06.`,
+        6800
+      )
     }
-  }, [commitProgress, toast])
+  }, [commitProgress, toast, unlockAchievement, unlockChapter])
 
   const disposeRuntime = useCallback(() => {
     engineRef.current?.dispose()
     engineRef.current = null
     audioRef.current?.dispose()
     audioRef.current = null
+    setSceneReady(false)
     setPointerLocked(false)
     setHover(null)
+    setMarkers([])
   }, [])
 
-  const bootSession = useCallback(
-    async (initialProgress: GameProgress) => {
-      const bundle = manifestsRef.current
-
-      if (!bundle) {
-        return
+  const mountLiveScene = useCallback(
+    async (bundle: ManifestBundle) => {
+      if (engineRef.current) {
+        return true
       }
-
-      disposeRuntime()
-      setOverlaySync({ type: 'none' })
-      setWebglErrorText(null)
-      setLoadPercent(0)
-      setLoadDetail('Comprobando WebGL 2...')
-      setPhaseSync('loading')
 
       const params = new URLSearchParams(window.location.search)
       const forceWebglError = params.get('forceWebglError') === '1'
@@ -334,12 +514,9 @@ export default function GameApp() {
         : checkWebGL2Support()
 
       if (!webgl.supported) {
-        setWebglErrorText(
-          'Este navegador no ofrece un contexto WebGL 2 activo. Activa la aceleración por hardware o prueba en un navegador de escritorio compatible.'
-        )
-        setPhaseSync('webgl-error')
+        setSceneReady(true)
 
-        return
+        return false
       }
 
       await new Promise<void>(resolve =>
@@ -349,10 +526,7 @@ export default function GameApp() {
       const host = canvasHostRef.current
 
       if (!host) {
-        setWebglErrorText('No se pudo montar el lienzo 3D.')
-        setPhaseSync('webgl-error')
-
-        return
+        return false
       }
 
       try {
@@ -364,7 +538,7 @@ export default function GameApp() {
         )
         audioRef.current = audio
 
-        const initialFlags = deriveWorldFlags(initialProgress)
+        const initialFlags = deriveWorldFlags(createInitialProgress())
         const engine = new SceneEngine(
           host,
           bundle.scene,
@@ -377,6 +551,7 @@ export default function GameApp() {
               setLoadDetail(detail)
             },
             onHoverChange: nextHover => setHover(nextHover),
+            onMarkersChange: nextMarkers => setMarkers(nextMarkers),
             onPointerLockChange: locked => setPointerLocked(locked),
             onInteract: kind => handleInteract(kind),
             onAbsenceSeen: () => handleAbsenceSeen(),
@@ -400,41 +575,93 @@ export default function GameApp() {
           audio.loadManifest(bundle.audio)
         ])
 
-        await audio.unlock()
-        commitProgress(initialProgress, true)
-        engine.resetCameraToSpawn()
-        engine.setMovementEnabled(true)
-        setPhaseSync('playing')
-        toast.show(
-          initialProgress.panelRead
-            ? getGuidanceSummary(initialProgress)
-            : bundle.story.opening.intro,
-          6200
-        )
-        subtitle.show(bundle.story.subtitles.hvac, 4200)
-      } catch (err) {
+        engine.setTitleMode(true)
+        setSceneReady(true)
+
+        return true
+      } catch {
         disposeRuntime()
+        setSceneReady(true)
+
+        return false
+      }
+    },
+    [disposeRuntime, handleAbsenceSeen, handleInteract, setPhaseSync, settings]
+  )
+
+  const enterGameplay = useCallback(
+    async (initialProgress: GameProgress) => {
+      const bundle = manifestsRef.current
+
+      if (!bundle) {
+        return
+      }
+
+      const params = new URLSearchParams(window.location.search)
+      const forceWebglError = params.get('forceWebglError') === '1'
+
+      if (forceWebglError || !checkWebGL2Support().supported) {
         setWebglErrorText(
-          err instanceof Error
-            ? `No se pudo iniciar la escena 3D: ${err.message}`
-            : 'No se pudo iniciar la escena 3D.'
+          'Este navegador no ofrece un contexto WebGL 2 activo. Activa la aceleración por hardware o prueba en un navegador de escritorio compatible.'
         )
         setPhaseSync('webgl-error')
+
+        return
       }
+
+      if (!engineRef.current) {
+        setPhaseSync('loading')
+
+        const ok = await mountLiveScene(bundle)
+
+        if (!ok || !engineRef.current) {
+          setWebglErrorText(
+            'No se pudo iniciar el contexto WebGL 2 para la escena 3D.'
+          )
+          setPhaseSync('webgl-error')
+
+          return
+        }
+      }
+
+      lockedExitAttemptsRef.current = 0
+      setEnteringGame(true)
+      await audioRef.current?.unlock()
+      audioRef.current?.setTitleAmbient(false)
+      audioRef.current?.playOneShot('ui-click', undefined, false)
+
+      commitProgress(initialProgress, true)
+      engineRef.current.startGameplayFromTitle()
+
+      const waitMs = settings.reducedMotion ? 0 : 320
+
+      if (waitMs > 0) {
+        await new Promise<void>(resolve => window.setTimeout(resolve, waitMs))
+      }
+
+      setEnteringGame(false)
+      setOverlaySync({ type: 'none' })
+      setPhaseSync('playing')
+      toast.show(
+        initialProgress.panelRead
+          ? getGuidanceSummary(initialProgress)
+          : bundle.story.opening.intro,
+        6200
+      )
+      subtitle.show(bundle.story.subtitles.hvac, 4200)
     },
     [
       commitProgress,
-      disposeRuntime,
-      handleAbsenceSeen,
-      handleInteract,
+      mountLiveScene,
       setOverlaySync,
       setPhaseSync,
-      settings,
+      settings.reducedMotion,
       subtitle,
       toast
     ]
   )
 
+  // Preload manifests + boot live 3D office backdrop directly behind the title screen
   useEffect(() => {
     let active = true
 
@@ -444,6 +671,7 @@ export default function GameApp() {
 
         manifestsRef.current = bundle
         setManifests(bundle)
+        void mountLiveScene(bundle)
       })
       .catch(err => {
         if (!active) return
@@ -458,6 +686,8 @@ export default function GameApp() {
     return () => {
       active = false
     }
+    // Run once on initial mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -505,6 +735,7 @@ export default function GameApp() {
     window.__TLC_QA__ = {
       getPhase: () => phaseRef.current,
       getProgress: () => progressRef.current,
+      getMeta: () => metaRef.current,
       getDiagnostics: () => engineRef.current?.getDiagnostics() ?? null,
       teleportAndLook: (position, lookAt) => {
         engineRef.current?.teleportAndLook(position, lookAt)
@@ -521,6 +752,10 @@ export default function GameApp() {
 
   useEffect(() => {
     return () => {
+      if (achTimerRef.current !== null) {
+        window.clearTimeout(achTimerRef.current)
+      }
+
       disposeRuntime()
     }
   }, [disposeRuntime])
@@ -531,24 +766,32 @@ export default function GameApp() {
     const fresh = createInitialProgress()
 
     setSaveState({ status: 'empty' })
-    void bootSession(fresh)
+    void enterGameplay(fresh)
   }
 
   const handleContinue = () => {
     const loaded = loadSave()
 
     if (loaded.status === 'ok') {
-      void bootSession(loaded.envelope.progress)
+      void enterGameplay(loaded.envelope.progress)
     } else {
       handlePlayNew()
     }
   }
 
+  const handleSelectChapter = (chapter: ChapterSpec) => {
+    void enterGameplay(chapter.buildProgress())
+  }
+
   const handleReturnToMenu = () => {
-    disposeRuntime()
+    audioRef.current?.stopVoicemail()
+    audioRef.current?.setTitleAmbient(true)
     setOverlaySync({ type: 'none' })
     setSaveState(loadSave())
     setPhaseSync('menu')
+    audioRef.current?.setDucked(false)
+    syncEngineWorld(createInitialProgress(), true)
+    engineRef.current?.setTitleMode(true)
   }
 
   const handleClearCorruptSave = () => {
@@ -557,7 +800,7 @@ export default function GameApp() {
   }
 
   const handleSaveLedgerFolio = (clueId: 'ledger_07' | 'ledger_19') => {
-    audioRef.current?.playOneShot('ui-click')
+    audioRef.current?.playOneShot('ui-click', undefined, false)
 
     const { progress: next } = recordClue(progressRef.current, clueId)
 
@@ -582,8 +825,16 @@ export default function GameApp() {
       audioRef.current?.playOneShot('restore')
       commitProgress(result.progress, false)
       toast.show(result.message, 5200)
+
+      if (puzzleId === 'folio-07') {
+        unlockAchievement('folio_07')
+        unlockChapter('second_shift')
+      } else if (puzzleId === 'folio-19') {
+        unlockAchievement('folio_19')
+        unlockChapter('last_commit')
+      }
     } else {
-      audioRef.current?.playOneShot('ui-click')
+      audioRef.current?.playOneShot('ui-click', undefined, false)
     }
 
     return { ok: result.ok, message: result.message }
@@ -604,11 +855,37 @@ export default function GameApp() {
       subtitle.show(bundle.story.subtitles.exit, 5500)
       toast.show(bundle.story.commit.exitCue, 6200)
     } else {
-      audioRef.current?.playOneShot('ui-click')
+      audioRef.current?.playOneShot('ui-click', undefined, false)
     }
 
     return { ok: result.ok, message: result.message }
   }
+
+  const handlePlayVoicemail = useCallback(
+    (file: string, onEnded: () => void) => {
+      void audioRef.current?.unlock()
+      unlockAchievement('voice_from_past')
+
+      return audioRef.current?.playVoicemail(file, onEnded) ?? false
+    },
+    [unlockAchievement]
+  )
+
+  const handleStopVoicemail = useCallback(() => {
+    audioRef.current?.stopVoicemail()
+  }, [])
+
+  const handleEmailRead = useCallback(
+    (emailId: string) => {
+      if (metaRef.current.emailsRead.includes(emailId)) return
+
+      updateMeta(current => ({
+        ...current,
+        emailsRead: [...current.emailsRead, emailId]
+      }))
+    },
+    [updateMeta]
+  )
 
   const handleRequestPointerLock = () => {
     void audioRef.current?.unlock()
@@ -638,26 +915,41 @@ export default function GameApp() {
 
   return (
     <div class='relative h-full w-full overflow-hidden bg-tlc-bg'>
+      {/* Always-mounted 3D office backdrop for seamless live title -> gameplay sweep */}
       <div
         ref={canvasHostRef}
         class={
-          phase === 'playing' || phase === 'loading' || phase === 'ending'
-            ? 'fixed inset-0 z-0 h-full w-full'
-            : 'hidden'
+          phase === 'webgl-error' ? 'hidden' : 'fixed inset-0 z-0 h-full w-full'
         }
       />
+
+      {activeAchievement && (
+        <AchievementToast achievement={activeAchievement} />
+      )}
 
       {phase === 'menu' && (
         <MenuScreen
           story={manifests?.story ?? null}
           saveState={saveState}
+          meta={meta}
+          sceneReady={sceneReady}
+          loadPercent={loadPercent}
+          loadDetail={loadDetail}
+          entering={enteringGame}
+          settings={settings}
           onPlayNew={handlePlayNew}
           onContinue={handleContinue}
+          onSelectChapter={handleSelectChapter}
+          onOpenAchievements={() => openOverlay({ type: 'achievements' })}
           onOpenSettings={() =>
             openOverlay({ type: 'settings', returnTo: 'menu' })
           }
           onOpenCredits={() => openOverlay({ type: 'credits' })}
           onClearCorruptSave={handleClearCorruptSave}
+          onToggleMute={() =>
+            setSettings(prev => ({ ...prev, muted: !prev.muted }))
+          }
+          onHoverItem={() => audioRef.current?.playHoverTick()}
         />
       )}
 
@@ -670,12 +962,12 @@ export default function GameApp() {
           <p class='font-console text-xs tracking-[0.22em] text-tlc-amber uppercase'>
             Planta 04 · Inicializando WebGL 2
           </p>
-          <h2 class='font-title text-4xl tracking-wide text-tlc-text uppercase'>
+          <h2 class='font-serif text-4xl text-tlc-text italic'>
             Cargando la oficina
           </h2>
-          <div class='h-2 w-full max-w-sm overflow-hidden rounded-full border border-tlc-line bg-tlc-panel'>
+          <div class='h-[3px] w-full max-w-sm overflow-hidden rounded-full bg-tlc-text/15'>
             <div
-              class='h-full bg-tlc-amber transition-all duration-200'
+              class='tlc-loading-sheen relative h-full bg-gradient-to-r from-[#c47d3b] to-[#f0bd74] transition-all duration-200'
               style={{ width: `${Math.max(4, loadPercent)}%` }}
             />
           </div>
@@ -702,7 +994,7 @@ export default function GameApp() {
           <div class='flex flex-wrap justify-center gap-3 pt-2'>
             <button
               type='button'
-              onClick={() => void bootSession(progressRef.current)}
+              onClick={() => void enterGameplay(progressRef.current)}
               class='rounded border border-tlc-amber bg-tlc-amber/15 px-5 py-2.5 font-console text-xs text-tlc-text uppercase transition hover:bg-tlc-amber/25'
             >
               Reintentar
@@ -729,6 +1021,7 @@ export default function GameApp() {
           dateLabel={manifests.story.opening.date}
           timeLabel={stage.time}
           hover={hover}
+          markers={markers}
           toastMessage={toast.message}
           subtitleMessage={subtitle.message}
           pointerLocked={pointerLocked}
@@ -746,9 +1039,18 @@ export default function GameApp() {
         <ConsolePanel
           story={manifests.story}
           progress={progress}
+          cctvFeeds={cctvFeeds}
+          emailsRead={meta.emailsRead}
+          onRefreshCctv={refreshCctv}
           onSubmitAnswer={handleSubmitPuzzle}
           onConfirmCommit={handleConfirmCommit}
+          onForceEnding={() => triggerEnding('force')}
           onInspectClue={clueId => setOverlaySync({ type: 'clue', clueId })}
+          onPlayVoicemail={handlePlayVoicemail}
+          onStopVoicemail={handleStopVoicemail}
+          onEmailRead={handleEmailRead}
+          onTerminalUsed={() => unlockAchievement('git_archaeologist')}
+          onCctvOpened={() => unlockAchievement('cctv_watcher')}
           onClose={closeOverlay}
         />
       )}
@@ -790,13 +1092,25 @@ export default function GameApp() {
         />
       )}
 
-      {overlay.type === 'credits' && <CreditsModal onClose={closeOverlay} />}
+      {overlay.type === 'achievements' && (
+        <AchievementsModal meta={meta} onClose={closeOverlay} />
+      )}
 
-      {phase === 'ending' && manifests && (
+      {overlay.type === 'credits' && (
+        <CreditsModal
+          reducedMotion={settings.reducedMotion}
+          onClose={closeOverlay}
+        />
+      )}
+
+      {phase === 'ending' && manifests && overlay.type !== 'credits' && (
         <EndingOverlay
           story={manifests.story}
+          endingId={endingId}
+          endingsCount={meta.endings.length}
           onReturnMenu={handleReturnToMenu}
           onPlayAgain={handlePlayNew}
+          onOpenCredits={() => openOverlay({ type: 'credits' })}
         />
       )}
     </div>
