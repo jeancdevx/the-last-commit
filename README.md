@@ -32,10 +32,11 @@ Entre la consola corporativa, una bitácora y los adornos de un árbol de Navida
 
 The Last Commit combina exploración en primera persona, lectura de evidencias y resolución de tres casos conectados. El terror surge de reconocer un espacio cotidiano y descubrir que algo ha cambiado al regresar. La luz fría de la oficina, el árbol ámbar y el sonido espacial acompañan esa transformación.
 
-- **Una investigación completa:** tres folios, restauración de registros y un cierre narrativo.
+- **Una investigación completa:** tres folios, restauración de registros, escritorio corporativo interactivo (Correo con notas de voz y transcripción, Chat `#planta-04`, Terminal Git y 3 cámaras CCTV en directo) y tres finales descubribles.
+- **Rejugabilidad y archivo:** selector de 4 capítulos desbloqueables, galería de 10 logros y créditos cinematográficos.
 - **Lectura a tu ritmo:** el reloj avanza por hitos de la historia; detenerte a leer no consume una cuenta atrás real.
 - **Evidencias que puedes releer:** las pistas se conservan y una respuesta incorrecta ofrece ayuda sin borrarlas.
-- **Continuidad entre sesiones:** progreso y ajustes se guardan en el navegador.
+- **Continuidad entre sesiones:** progreso, logros, capítulos y ajustes se guardan en el navegador.
 
 La partida está diseñada para escritorio, con teclado y ratón. La duración prevista en el documento de diseño es de **12–15 minutos**; el primer suceso constituye una secuencia de **90–120 segundos**. Son objetivos de diseño, no tiempos medidos con jugadores.
 
@@ -197,7 +198,7 @@ Playwright inicia el servidor de vista previa configurado sobre `dist/`. Si ya e
 
 Las pruebas E2E comprueban carga de recursos y WebGL 2, movimiento, progresión de los tres folios, persistencia, final y recuperación de errores. También generan capturas en `evidence/`; revisa sus cambios antes de incluirlas en un commit.
 
-El [informe de entrega](docs/informe-entrega.md) registra **12 pruebas unitarias** y **2 pruebas E2E** aprobadas en Chromium con SwiftShader. Ese entorno usa renderizado por software: la validación con ratón físico, la escucha espacial y las mediciones de rendimiento en GPU permanecen documentadas como pendientes.
+El [informe de entrega](docs/informe-entrega.md) registra **18 pruebas unitarias** y **2 pruebas E2E** aprobadas en Chromium con SwiftShader. Ese entorno usa renderizado por software: la validación con ratón físico, la escucha espacial con auriculares y las mediciones de rendimiento con bloom y sombras en GPU permanecen documentadas como pendientes.
 
 ### Convenciones de trabajo
 
@@ -253,6 +254,6 @@ Para reportar un fallo, incluye navegador, sistema operativo, pasos de reproducc
 
 Proyecto de **[jeancdevx](https://github.com/jeancdevx)**.
 
-El repositorio incluye los avisos **SIL Open Font License** de Barlow Condensed, IBM Plex Mono e Inter en [`licenses/`](licenses/). La procedencia del arte, los modelos, las texturas y el audio está recogida en [Créditos y fuentes](docs/creditos-y-fuentes.md).
+El repositorio incluye los avisos **SIL Open Font License** de Barlow Condensed, IBM Plex Mono, Inter e Instrument Serif en [`licenses/`](licenses/). La procedencia del arte, los modelos, las texturas y el audio está recogida en [Créditos y fuentes](docs/creditos-y-fuentes.md).
 
 Actualmente no se incluye una licencia general para el código y los recursos originales del proyecto. Las licencias de las fuentes corresponden a esos archivos concretos.
