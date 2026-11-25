@@ -1,0 +1,16 @@
+{
+  "version":1,
+  "authoring":"Síntesis procedural original. Fuentes editables en art-source/generate_audio.py.",
+  "assets":[
+    {"id":"hvac","file":"office-hvac.wav","source":"office-hvac.wav","loop":true,"gain":0.32,"role":"Ventilación general"},
+    {"id":"a07","file":"fluorescent-a07.wav","source":"fluorescent-a07.wav","loop":true,"gain":0.45,"role":"Zumbido espacial del puesto A-07"},
+    {"id":"steps-01","file":"step-carpet-01.mp3","source":"step-carpet-01.wav","gain":0.48,"role":"Pisada 1"},
+    {"id":"steps-02","file":"step-carpet-02.mp3","source":"step-carpet-02.wav","gain":0.48,"role":"Pisada 2"},
+    {"id":"steps-03","file":"step-carpet-03.mp3","source":"step-carpet-03.wav","gain":0.48,"role":"Pisada 3"},
+    {"id":"paper","file":"paper-inspect.mp3","source":"paper-inspect.wav","gain":0.56,"role":"Lectura de pistas"},
+    {"id":"ui-click","file":"ui-click.mp3","source":"ui-click.wav","gain":0.48,"role":"Interacción con el panel"},
+    {"id":"tree-cue","file":"tree-motif.mp3","source":"tree-motif.wav","gain":0.44,"role":"Motivo original de tres notas que localiza el árbol"},
+    {"id":"restore","file":"restore.mp3","source":"restore.wav","gain":0.50,"role":"Turno restaurado"},
+    {"id":"exit","file":"exit-latch.mp3","source":"exit-latch.wav","gain":0.49,"role":"Pestillo de salida"}
+  ]
+}
