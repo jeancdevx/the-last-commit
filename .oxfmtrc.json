@@ -1,0 +1,58 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "astro": true,
+  "arrowParens": "avoid",
+  "bracketSpacing": true,
+  "htmlWhitespaceSensitivity": "css",
+  "jsxSingleQuote": true,
+  "printWidth": 80,
+  "proseWrap": "always",
+  "quoteProps": "as-needed",
+  "semi": false,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "none",
+  "useTabs": false,
+  "sortImports": {
+    "order": "asc",
+    "ignoreCase": false,
+    "newlinesBetween": true,
+    "internalPattern": ["@/"],
+    "sortSideEffects": false,
+    "groups": [
+      ["builtin", "type-builtin"],
+      ["external", "type-external"],
+      ["internal", "type-internal", "subpath", "type-subpath"],
+      ["parent", "type-parent"],
+      ["sibling", "type-sibling", "index", "type-index"],
+      "style",
+      "unknown"
+    ]
+  },
+  "sortTailwindcss": {
+    "stylesheet": "./src/styles/global.css",
+    "attributes": ["class", "className"],
+    "functions": ["cn", "clsx", "cva"],
+    "preserveWhitespace": false,
+    "preserveDuplicates": false
+  },
+  "ignorePatterns": [
+    "The_Last_Commit_Kit/**",
+    ".agents/**",
+    "public/**",
+    "**/dist/**",
+    "evidence/**",
+    "docs/**",
+    "licenses/**",
+    "tooling/**",
+    "art-source/**",
+    "**/.astro/**",
+    "pnpm-lock.yaml",
+    "skills-lock.json",
+    "AGENTS.md",
+    "README.md",
+    "test-results/**",
+    "playwright-report/**",
+    ".husky/_/**"
+  ]
+}
