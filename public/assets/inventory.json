@@ -2,6 +2,26 @@
   "version": 1,
   "files": [
     {
+      "path": "art/ach-exit.jpg",
+      "bytes": 14193,
+      "sha256": "de97b38bdc1b47e60640c073a86b27fc1073548c9a45102f680761b81934746c"
+    },
+    {
+      "path": "art/ach-terminal.jpg",
+      "bytes": 9951,
+      "sha256": "92eca2d9ee944fd118a4dc9c2b0107b38f831760dd2d2baea7b61cee670ac284"
+    },
+    {
+      "path": "art/ach-tree.jpg",
+      "bytes": 21983,
+      "sha256": "65a97b77f2e738d24a2e07f9566a5ddf62b2b61a4de4ad219d59184e1daece23"
+    },
+    {
+      "path": "art/ach-vanished.jpg",
+      "bytes": 13301,
+      "sha256": "d879cb8ca980d01a4ab5f991216429eccaedaa2a166cbe5c20cde47b69303164"
+    },
+    {
       "path": "art/cover.webp",
       "bytes": 93444,
       "sha256": "ddcb96fea5d04c9257a6711e341ca8ac952cc678e8b828915496d362addfc93d"
@@ -42,6 +62,11 @@
       "sha256": "ae9ffaa30b354b83c15c103927765f4c80b899f5044dcbcd5b7696a9a956535a"
     },
     {
+      "path": "audio/power-dip.mp3",
+      "bytes": 40585,
+      "sha256": "6cd35f29454d7c8f80c54a4ceb631c5b1c94e0827d1b4c450b7b0d514bd8657b"
+    },
+    {
       "path": "audio/restore.mp3",
       "bytes": 18852,
       "sha256": "0a20ba0f89813c2e341eefe56bf61f00b0ae12aa4d1bedd3aba42f3bcb29283e"
@@ -72,6 +97,21 @@
       "sha256": "0136361a5c121bbba1ce81a4979e5899114e9d5e2126a2199520b5537de31e62"
     },
     {
+      "path": "audio/voicemail-rojas.mp3",
+      "bytes": 94919,
+      "sha256": "f1e822f76232034320891553457327fe42de5bea8319cf8bd7c4156ef360e359"
+    },
+    {
+      "path": "audio/voicemail-salas.mp3",
+      "bytes": 83007,
+      "sha256": "06699ed1a231128075f863dd1703712c17999200741f2879249fe7ff31eb0bd3"
+    },
+    {
+      "path": "audio/whisper-a07.mp3",
+      "bytes": 27001,
+      "sha256": "bc709b6e4dfd7b29b1a4b9d9e2d10218f88d4c11231eb12fbe06e477a19e8a88"
+    },
+    {
       "path": "branding/apple-touch-icon.png",
       "bytes": 7796,
       "sha256": "13f994c13ba8ee2fc4c7fcf7855f76e8b90787f0d4860de84f28fdce1a50d2c5"
@@ -98,8 +138,8 @@
     },
     {
       "path": "branding/theme.css",
-      "bytes": 1168,
-      "sha256": "47155d35d6180f318a43ea879ce605bcee9d3473a27bc2042d015a6f667fc7ca"
+      "bytes": 1631,
+      "sha256": "3f304832231c170495c79c11b339b6e0df2e49a0b7f3d7eeb939fc18ca8d5f46"
     },
     {
       "path": "branding/wordmark-dark.png",
@@ -120,6 +160,16 @@
       "path": "fonts/ibm-plex-mono-latin-500-normal.woff2",
       "bytes": 14888,
       "sha256": "01d285447409c8a588692162439a038b8cbd7871309ee20267b0d2d91c6e8e22"
+    },
+    {
+      "path": "fonts/instrument-serif-latin-400-italic.woff2",
+      "bytes": 22128,
+      "sha256": "5a51946dfffa82972bc98745359c46761515641fda557c25116459a9f83da4a7"
+    },
+    {
+      "path": "fonts/instrument-serif-latin-400-normal.woff2",
+      "bytes": 21032,
+      "sha256": "5eb09b5ac0e28b67c2f041c8ba6d244604ca0c0980d65912ab2d47fed84ddc31"
     },
     {
       "path": "fonts/inter-latin-400-normal.woff2",
@@ -195,6 +245,11 @@
       "path": "textures/ceiling-tile.jpg",
       "bytes": 20327,
       "sha256": "a50da9c3de3d370a16c4515fa98b41bfb8d0d7c26536da12f77cceb5bbee2a91"
+    },
+    {
+      "path": "textures/city-night-panorama.jpg",
+      "bytes": 152803,
+      "sha256": "9ada6b5bf5e5fd264ca03e073cd0179c33cf46d4471d911b0d66a3b86063b8a7"
     },
     {
       "path": "textures/current-note.png",
